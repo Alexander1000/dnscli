@@ -1,0 +1,19 @@
+package app
+
+import "time"
+
+// WithBaseURL sets an app's base URL
+func WithBaseURL(baseURL string) Option {
+	return func(a *app) error {
+		a.baseURL = baseURL
+		return nil
+	}
+}
+
+// WithTimeout sets an app's timeout
+func WithTimeout(t int64) Option {
+	return func(a *app) error {
+		a.httpClient.Timeout = time.Duration(t) * time.Second
+		return nil
+	}
+}
