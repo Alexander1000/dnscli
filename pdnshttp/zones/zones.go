@@ -1,6 +1,9 @@
 package zones
 
 import (
+	"fmt"
+	"net/url"
+
 	"github.com/mixanemca/dnscli/models"
 	"github.com/mixanemca/dnscli/pdnshttp"
 )
@@ -56,14 +59,14 @@ func (c *client) Update(fz models.ForwardZone) error {
 	}
 	return nil
 }
+*/
 
-// Delete delete forwarding zone
+// Delete delete zone from authoritative server
 func (c *client) Delete(name string) error {
-	path := fmt.Sprintf("/api/v1/servers/localhost/forward-zones/%s", url.PathEscape(name))
+	path := fmt.Sprintf("/api/v1/servers/localhost/zones/%s", url.PathEscape(name))
 	err := c.httpClient.Delete(path, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-*/

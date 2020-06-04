@@ -12,6 +12,6 @@ type Client interface {
 	Add(models.Zone) (*models.Zone, error)
 	// Update updates forwarding zone
 	// Update(models.ForwardZone) error
-	// Delete delete forwarding zone
-	// Delete(name string) error
+	// Delete delete zone from authoritative server
+	Delete(name string) error
 }
