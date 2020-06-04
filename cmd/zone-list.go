@@ -30,7 +30,7 @@ import (
 var zoneListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Use:     "list",
-	Short:   "List of zones",
+	Short:   "List of zones from authoritative servers",
 	Example: "  dnscli zone list",
 	Run:     zoneListRun,
 }
