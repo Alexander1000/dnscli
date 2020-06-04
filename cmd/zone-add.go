@@ -118,6 +118,11 @@ func zoneAddCmdRun(cmd *cobra.Command, args []string) {
 	for i := range ns {
 		ns[i] = models.DeCanonicalize(ns[i])
 	}
+
+	if viper.GetString("output-type") == "json" {
+		fmt.Println(created.JSON())
+		return
+	}
 	fmt.Printf("domain %s has been added to authoritative server with nameservers %s\n",
 		models.DeCanonicalize(created.Name), strings.Join(ns, ", "))
 }

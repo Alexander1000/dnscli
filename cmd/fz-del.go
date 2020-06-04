@@ -56,5 +56,10 @@ func fzDelCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	if viper.GetString("output-type") == "json" {
+		fmt.Println("{}")
+		return
+	}
 	fmt.Printf("domain %s was removed from forwarding zones\n", name)
 }

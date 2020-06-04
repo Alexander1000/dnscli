@@ -70,5 +70,10 @@ func fzUpdateCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	if viper.GetString("output-type") == "json" {
+		fmt.Println("{}")
+		return
+	}
 	fmt.Printf("forwarding zone %s was updated with nameservers %s\n", name, nameservers)
 }

@@ -70,5 +70,9 @@ func fzAddCmdRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	if viper.GetString("output-type") == "json" {
+		fmt.Println("{}")
+		return
+	}
 	fmt.Printf("domain %s has been added to forwarding zone with nameservers %s\n", name, nameservers)
 }
