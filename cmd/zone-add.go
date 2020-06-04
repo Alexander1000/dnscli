@@ -27,32 +27,29 @@ import (
 	"github.com/spf13/viper"
 )
 
-// fzUpdateCmd represents the update command
-var fzUpdateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   "Update existing forwarding zone",
-	Example: "  dnscli fz update --name example.com --nameservers \"127.0.0.1:5353, 10.0.0.1\"",
-	Run:     fzUpdateCmdRun,
+// fzAddCmd represents the add command
+var zoneAddCmd = &cobra.Command{
+	Use:     "add",
+	Short:   "Add zone to authoritative",
+	Example: "  dnscli zone add --name example.com --nameservers ns01.example.com",
+	Run:     zoneAddCmdRun,
 }
 
 func init() {
-	fzCmd.AddCommand(fzUpdateCmd)
+	zoneCmd.AddCommand(zoneAddCmd)
 
-	fzUpdateCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
-	fzUpdateCmd.MarkPersistentFlagRequired("name")
-	fzUpdateCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
-	fzUpdateCmd.MarkPersistentFlagRequired("nameservers")
+	zoneAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
+	zoneAddCmd.MarkPersistentFlagRequired("name")
+	zoneAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
+	zoneAddCmd.MarkPersistentFlagRequired("nameservers")
 }
 
-func fzUpdateCmdRun(cmd *cobra.Command, args []string) {
+func zoneAddCmdRun(cmd *cobra.Command, args []string) {
 	// make slice of strings and trim spaces
 	ns := strings.Split(nameservers, ",")
 	for i := range ns {
 		ns[i] = strings.TrimSpace(ns[i])
-	}
-	fz := models.ForwardZone{
-		Name:        name,
-		Nameservers: ns,
+		ns[i] = models.Canonicalize(ns[i])
 	}
 
 	a, err := app.New(
@@ -64,11 +61,16 @@ func fzUpdateCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	err = a.ForwardZones().Update(fz)
+	zone := models.Zone{
+		Name:        models.Canonicalize(name),
+		Nameservers: ns,
+	}
+	created, err := a.Zones().Add(zone)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("forwarding zone %s was updated with nameservers %s\n", name, nameservers)
+
+	fmt.Printf("domain %s has been added to authoritative server with nameservers %s\n",
+		models.DeCanonicalize(created.Name), strings.Join(created.Nameservers, ", "))
 }

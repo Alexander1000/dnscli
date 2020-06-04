@@ -54,6 +54,7 @@ func fzAddCmdRun(cmd *cobra.Command, args []string) {
 	a, err := app.New(
 		app.WithBaseURL(viper.GetString("baseURL")),
 		app.WithTimeout(viper.GetInt64("timeout")),
+		app.WithDebuggingOutput(viper.GetBool("debug")),
 	)
 	if err != nil {
 		fmt.Println(err)

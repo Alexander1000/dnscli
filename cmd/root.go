@@ -31,6 +31,9 @@ var (
 	baseURL       string
 	clientTimeout int
 	outputType    string
+	name          string
+	nameservers   string
+	debug         bool
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -68,10 +71,12 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&baseURL, "baseURL", "b", "http://127.0.0.1:8081", "PowerDNS API base URL")
 	rootCmd.PersistentFlags().IntVarP(&clientTimeout, "timeout", "", 5, "Client timeout in seconds")
 	rootCmd.PersistentFlags().StringVarP(&outputType, "output-type", "o", "text", "Print output in format: text/json")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Turn on debug output to STDERR")
 
 	viper.BindPFlag("baseURL", rootCmd.PersistentFlags().Lookup("baseURL"))
 	viper.BindPFlag("timeout", rootCmd.PersistentFlags().Lookup("timeout"))
 	viper.BindPFlag("output-type", rootCmd.PersistentFlags().Lookup("output-type"))
+	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 }
 
 // initConfig reads in config file and ENV variables if set.

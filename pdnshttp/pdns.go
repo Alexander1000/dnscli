@@ -4,24 +4,26 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 	"time"
 )
 
 // PDNSClient is the client for PowerDNS API
 type PDNSClient struct {
-	baseURL    string
-	httpClient *http.Client
-	// fz      *fz.Client
+	baseURL     string
+	httpClient  *http.Client
+	debugOutput io.Writer
 }
 
 // NewPDNSClient creates a new PDNSClient
-func NewPDNSClient(baseURL string, t time.Duration) *PDNSClient {
+func NewPDNSClient(baseURL string, t time.Duration, debugOutput io.Writer) *PDNSClient {
 	return &PDNSClient{
 		baseURL: baseURL,
 		httpClient: &http.Client{
 			Timeout: t,
 		},
+		debugOutput: debugOutput,
 	}
 }
 
@@ -69,15 +71,16 @@ func (pc *PDNSClient) doRequest(method string, path string, out interface{}, opt
 		}
 	}
 
-	/*
-		reqDump, _ := httputil.DumpRequestOut(req, true)
-		fmt.Println(string(reqDump))
-	*/
+	reqDump, _ := httputil.DumpRequestOut(req, true)
+	pc.debugOutput.Write(reqDump)
 
 	res, err := pc.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
+
+	resDump, _ := httputil.DumpResponse(res, true)
+	pc.debugOutput.Write(resDump)
 
 	if res.StatusCode == http.StatusNotFound {
 		return ErrNotFound{URL: req.URL.String()}

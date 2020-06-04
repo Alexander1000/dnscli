@@ -1,6 +1,9 @@
 package app
 
-import "time"
+import (
+	"os"
+	"time"
+)
 
 // WithBaseURL sets an app's base URL
 func WithBaseURL(baseURL string) Option {
@@ -14,6 +17,17 @@ func WithBaseURL(baseURL string) Option {
 func WithTimeout(t int64) Option {
 	return func(a *app) error {
 		a.httpClient.Timeout = time.Duration(t) * time.Second
+		return nil
+	}
+}
+
+// WithDebuggingOutput can be used to supply an io.Writer to the client into which all
+// outgoing HTTP requests and their responses will be logged. Useful for debugging.
+func WithDebuggingOutput(yes bool) Option {
+	return func(a *app) error {
+		if yes {
+			a.debugOutput = os.Stderr
+		}
 		return nil
 	}
 }

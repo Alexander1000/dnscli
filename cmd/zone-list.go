@@ -21,26 +21,27 @@ import (
 	"os"
 
 	"github.com/mixanemca/dnscli/app"
+	"github.com/mixanemca/dnscli/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// fzListCmd represents the list command
-var fzListCmd = &cobra.Command{
+// zoneListCmd represents the list command
+var zoneListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Use:     "list",
-	Short:   "List of forwarding zones",
-	Example: "  dnscli fz list",
-	Run:     fzListRun,
+	Short:   "List of zones",
+	Example: "  dnscli zone list",
+	Run:     zoneListRun,
 }
 
 func init() {
-	fzCmd.AddCommand(fzListCmd)
+	zoneCmd.AddCommand(zoneListCmd)
 
-	fzListCmd.PersistentFlags().StringP("name", "n", "", "Name of forwarding zone")
+	zoneListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Name of authoritative zone")
 }
 
-func fzListRun(cmd *cobra.Command, args []string) {
+func zoneListRun(cmd *cobra.Command, args []string) {
 	a, err := app.New(
 		app.WithBaseURL(viper.GetString("baseURL")),
 		app.WithTimeout(viper.GetInt64("timeout")),
@@ -50,15 +51,20 @@ func fzListRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fzs, err := a.ForwardZones().List()
+	var zones models.Zones
+	if name != "" {
+		zones, err = a.Zones().ListByName(name)
+	} else {
+		zones, err = a.Zones().List()
+	}
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	if viper.GetString("output-type") == "json" {
-		fmt.Println(fzs.JSON())
+		fmt.Println(zones.JSON())
 		return
 	}
-	fmt.Print(fzs.PrettyString())
+	fmt.Print(zones.PrettyString())
 }

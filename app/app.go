@@ -1,11 +1,15 @@
 package app
 
 import (
+	"io"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/mixanemca/dnscli/pdnshttp"
 	"github.com/mixanemca/dnscli/pdnshttp/fz"
+	"github.com/mixanemca/dnscli/pdnshttp/zones"
 )
 
 const (
@@ -16,10 +20,12 @@ const (
 )
 
 type app struct {
-	baseURL    string
-	httpClient *http.Client
+	baseURL     string
+	httpClient  *http.Client
+	debugOutput io.Writer
 
-	fz fz.Client
+	fz    fz.Client
+	zones zones.Client
 }
 
 // Option options for app
@@ -33,6 +39,7 @@ func New(opt ...Option) (App, error) {
 		httpClient: &http.Client{
 			Timeout: DefaultClientTimeout,
 		},
+		debugOutput: ioutil.Discard,
 	}
 
 	for i := range opt {
@@ -41,8 +48,9 @@ func New(opt ...Option) (App, error) {
 		}
 	}
 
-	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient.Timeout)
+	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient.Timeout, a.debugOutput)
 	a.fz = fz.New(hc)
+	a.zones = zones.New(hc)
 
 	return &a, nil
 }
@@ -57,6 +65,17 @@ func (a *app) SetTimeout(d time.Duration) {
 	a.httpClient.Timeout = d
 }
 
+// SetDebugOutput overrides the default debugOutput
+func (a *app) SetDebugOutput(yes bool) {
+	if yes {
+		a.debugOutput = os.Stderr
+	}
+}
+
 func (a *app) ForwardZones() fz.Client {
 	return a.fz
+}
+
+func (a *app) Zones() zones.Client {
+	return a.zones
 }

@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,11 @@ import (
 )
 
 // fzCmd represents the fz command
-var fzCmd = &cobra.Command{
-	Use:   "fz",
-	Short: "Management of forwarding zones",
+var zoneCmd = &cobra.Command{
+	Use:   "zone",
+	Short: "Management of zones",
 }
 
 func init() {
-	rootCmd.AddCommand(fzCmd)
+	rootCmd.AddCommand(zoneCmd)
 }
