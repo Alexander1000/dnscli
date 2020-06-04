@@ -27,13 +27,15 @@ import (
 )
 
 var (
-	cfgFile       string
 	baseURL       string
+	cfgFile       string
 	clientTimeout int
-	outputType    string
+	debug         bool
+	kind          string
+	masters       string
 	name          string
 	nameservers   string
-	debug         bool
+	outputType    string
 )
 
 // rootCmd represents the base command when called without any subcommands
