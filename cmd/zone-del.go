@@ -52,7 +52,7 @@ func zoneDelCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	err = a.Zones().Delete(models.DeCanonicalize(name))
+	err = a.Zones().Delete(models.Canonicalize(name))
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
