@@ -30,7 +30,7 @@ import (
 // fzAddCmd represents the add command
 var zoneAddCmd = &cobra.Command{
 	Use:     "add",
-	Short:   "Add zone to authoritative",
+	Short:   "Add zone to authoritative servers",
 	Example: "  dnscli zone add --name example.com --nameservers ns01.example.com",
 	Run:     zoneAddCmdRun,
 }
@@ -38,18 +38,66 @@ var zoneAddCmd = &cobra.Command{
 func init() {
 	zoneCmd.AddCommand(zoneAddCmd)
 
+	zoneAddCmd.PersistentFlags().StringVarP(&kind, "kind", "k", "native", "Zone kind (native, master, slave)")
+	zoneAddCmd.PersistentFlags().StringVarP(&masters, "masters", "m", "", "Comma separated list of IP addresses configured as a master for this zone (\"Slave\" type zones only)")
 	zoneAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
 	zoneAddCmd.MarkPersistentFlagRequired("name")
 	zoneAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
-	zoneAddCmd.MarkPersistentFlagRequired("nameservers")
+	// zoneAddCmd.MarkPersistentFlagRequired("nameservers")
+	zoneAddCmd.PersistentFlags().StringVarP(&email, "soa-email", "e", "admins.avito.ru", "Email for the domain")
 }
 
 func zoneAddCmdRun(cmd *cobra.Command, args []string) {
 	// make slice of strings and trim spaces
-	ns := strings.Split(nameservers, ",")
-	for i := range ns {
-		ns[i] = strings.TrimSpace(ns[i])
-		ns[i] = models.Canonicalize(ns[i])
+	ns := make(models.ZoneNameservers, 0)
+	m := make([]string, 0)
+	if len(nameservers) > 0 {
+		ns = strings.Split(nameservers, ",")
+		for i := range ns {
+			ns[i] = strings.TrimSpace(ns[i])
+			ns[i] = models.Canonicalize(ns[i])
+		}
+	}
+	if len(masters) > 0 {
+		m = strings.Split(masters, ",")
+		for i := range m {
+			m[i] = strings.TrimSpace(m[i])
+		}
+	}
+
+	var zk models.ZoneKind
+	switch kind {
+	case "native":
+		zk = models.ZoneKindNative
+	case "master":
+		zk = models.ZoneKindMaster
+	case "slave":
+		zk = models.ZoneKindSlave
+	}
+
+	var rrsets []models.ResourceRecordSet
+	var records []models.Record
+	soa := models.Record{
+		Content: fmt.Sprintf("%s %s 1 10800 3600 604800 3600",
+			models.Canonicalize(name),
+			models.Canonicalize(email)),
+	}
+	records = append(records, soa)
+	rrset := models.ResourceRecordSet{
+		Name:       models.Canonicalize(name),
+		Type:       "SOA",
+		TTL:        3600,
+		ChangeType: models.ChangeTypeReplace,
+		Records:    records,
+	}
+	rrsets = append(rrsets, rrset)
+
+	zone := models.Zone{
+		Name:               models.Canonicalize(name),
+		Nameservers:        ns,
+		Kind:               zk,
+		Masters:            m,
+		ResourceRecordSets: rrsets,
 	}
 
 	a, err := app.New(
@@ -61,16 +109,15 @@ func zoneAddCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	zone := models.Zone{
-		Name:        models.Canonicalize(name),
-		Nameservers: ns,
-	}
 	created, err := a.Zones().Add(zone)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
+	for i := range ns {
+		ns[i] = models.DeCanonicalize(ns[i])
+	}
 	fmt.Printf("domain %s has been added to authoritative server with nameservers %s\n",
-		models.DeCanonicalize(created.Name), strings.Join(created.Nameservers, ", "))
+		models.DeCanonicalize(created.Name), strings.Join(ns, ", "))
 }
