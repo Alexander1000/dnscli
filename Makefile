@@ -1,7 +1,7 @@
 PROJECTNAME := "dnscli"
 VERSION := $(shell cat VERSION)
 BUILD := $(shell git rev-parse --short HEAD)
-DESCRIPTION := "CLI utility for manage DNSaaS"
+DESCRIPTION := "The dnscli utility is used to manage DNS zones on domains and domain aliases through CLI."
 MAINTAINER := "Mikhail Bruskov <mvbruskov@avito.ru>"
 SHELL := /bin/bash
 
@@ -57,16 +57,16 @@ test:
 	@go test -v $(GOFILES)
 
 ## fpm-deb: Build Debian package.
-fpm-deb: linux
+fpm-deb:
 	fpm -s dir -t deb -n $(PROJECTNAME) -v $(VERSION) \
 		--deb-priority optional --category admin \
 		--force \
-		--url https://github.com/nemca/$(PROJECTNAME) \
+		--url https://github.com/mixanemca/$(PROJECTNAME) \
 		--description $(DESCRIPTION) \
 		-m $(MAINTAINER) \
 		--license "Apache 2.0" \
 		-a amd64  \
-		dnscli.yaml.example=/usr/share/doc/$(PROJECTNAME)/dnscli.yaml.example \
+		debian/dnscli.examples=/usr/share/doc/$(PROJECTNAME)/dnscli.example.yaml \
 		$(PROJECTNAME)=/usr/bin/$(PROJECTNAME)
 
 ## install: Install binary to your system
