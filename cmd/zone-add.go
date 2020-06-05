@@ -27,7 +27,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// fzAddCmd represents the add command
+// zoneAddCmd represents the add command
 var zoneAddCmd = &cobra.Command{
 	Use:     "add",
 	Short:   "Add zone to authoritative servers",
