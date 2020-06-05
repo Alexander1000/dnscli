@@ -49,18 +49,6 @@ func (c *client) Add(z models.Zone) (*models.Zone, error) {
 	return &created, nil
 }
 
-/*
-// Update updates forwarding zone
-func (c *client) Update(fz models.ForwardZone) error {
-	path := fmt.Sprintf("/api/v1/servers/localhost/forward-zones/%s", fz.Name)
-	err := c.httpClient.Patch(path, nil, pdnshttp.WithJSONRequestBody(&fz))
-	if err != nil {
-		return err
-	}
-	return nil
-}
-*/
-
 // Delete delete zone from authoritative server
 func (c *client) Delete(name string) error {
 	path := fmt.Sprintf("/api/v1/servers/localhost/zones/%s", url.PathEscape(name))
@@ -69,4 +57,19 @@ func (c *client) Delete(name string) error {
 		return err
 	}
 	return nil
+}
+
+// AddRecordSet will add a new set of recorecord
+// sets for the exact name/type combination
+func (c *client) AddRecordSet(zone string, set models.ResourceRecordSet) error {
+	path := fmt.Sprintf("/api/v1/servers/localhost/zones/%s", url.PathEscape(zone))
+
+	set.ChangeType = models.ChangeTypeReplace
+	patch := models.Zone{
+		ResourceRecordSets: []models.ResourceRecordSet{
+			set,
+		},
+	}
+
+	return c.httpClient.Patch(path, nil, pdnshttp.WithJSONRequestBody(&patch))
 }

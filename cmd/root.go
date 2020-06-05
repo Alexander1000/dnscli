@@ -26,10 +26,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	domainPattern = `[[:alpha:]]+\.(.*)`
+)
+
 var (
 	baseURL       string
 	cfgFile       string
 	clientTimeout int
+	content       string
 	debug         bool
 	email         string
 	kind          string
@@ -37,6 +42,9 @@ var (
 	name          string
 	nameservers   string
 	outputType    string
+	rrtype        string
+	ttl           int
+	zone          string
 )
 
 // rootCmd represents the base command when called without any subcommands
