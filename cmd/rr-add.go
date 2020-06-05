@@ -19,7 +19,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/mixanemca/dnscli/app"
@@ -28,16 +27,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	r = regexp.MustCompile(domainPattern)
-)
-
 // AddCmd represents the add command
 var rrAddCmd = &cobra.Command{
+	Aliases: []string{"change", "mv", "new", "replace", "update"},
 	Use:     "add",
-	Short:   "Add resource recond to zone on an authoritative servers",
-	Example: "  dnscli rr add --name host.example.com --type A --ttl 400 --content 10.0.0.1",
-	Run:     rrAddCmdRun,
+	Short:   "Add (replace) resource recond to zone on an authoritative servers",
+	Example: `  dnscli rr new --name host.example.com --type A --ttl 400 --content 10.0.0.1
+  dnscli rr update --name cname.example.com --type CNAME --ttl 30 --content host.example.com
+  dnscli rr change --name example.com --type SOA --zone example.com --content "ns1.example.com. admins.avito.ru. 2020060511 1800 900 604800 86400"`,
+	Run: rrAddCmdRun,
 }
 
 func init() {
@@ -49,17 +47,17 @@ func init() {
 	rrAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Resource record name")
 	rrAddCmd.MarkPersistentFlagRequired("name")
 	rrAddCmd.PersistentFlags().IntVarP(&ttl, "ttl", "l", 1800, "The time to live of the resource record in seconds")
-	rrAddCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "A", "Type of the resource record")
+	rrAddCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "", "Type of the resource record (A, CNAME)")
+	rrAddCmd.MarkPersistentFlagRequired("type")
 }
 
 func rrAddCmdRun(cmd *cobra.Command, args []string) {
-	domain := zone
-	if domain == "" {
-		domain = r.ReplaceAllString(name, "$1")
+	if zone == "" {
+		zone = domainRegexp.ReplaceAllString(name, "$1")
 	}
 
-	if !strings.Contains(name, domain) {
-		fmt.Printf("ERROR: Domain name %s not match with zone %s\n", name, domain)
+	if !strings.Contains(name, zone) {
+		fmt.Printf("ERROR: Domain name %s not match with zone %s\n", name, zone)
 		os.Exit(1)
 	}
 
@@ -67,10 +65,11 @@ func rrAddCmdRun(cmd *cobra.Command, args []string) {
 	if rrtype == "A" || rrtype == "AAAA" || rrtype == "NS" ||
 		rrtype == "CNAME" || rrtype == "DNAME" {
 		name = models.Canonicalize(name)
-		domain = models.Canonicalize(domain)
+		zone = models.Canonicalize(zone)
 	}
-
-	fmt.Printf("Change %s for %s domain to %s\n", name, domain, content)
+	if rrtype == "CNAME" {
+		content = models.Canonicalize(content)
+	}
 
 	var records []models.Record
 	record := models.Record{
@@ -94,7 +93,7 @@ func rrAddCmdRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	err = a.Zones().AddRecordSet(domain, rrset)
+	err = a.Zones().AddRecordSet(zone, rrset)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -104,6 +103,6 @@ func rrAddCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println("{}")
 		return
 	}
-	fmt.Printf("Resource record %s with type %s and TTL has been added to zone %s with content %s\n",
-		models.DeCanonicalize(name), rrtype, domain, content)
+	fmt.Printf("Resource record %s with type %s and TTL %d has been added to zone %s with content %s\n",
+		models.DeCanonicalize(name), rrtype, ttl, models.DeCanonicalize(zone), content)
 }

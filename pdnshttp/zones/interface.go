@@ -11,6 +11,9 @@ type Client interface {
 	AddRecordSet(zone string, set models.ResourceRecordSet) error
 	// Delete delete zone from authoritative server
 	Delete(name string) error
+	// DeleteRecordSet removes a record set from a zone. The record set is matched
+	// by name and type.
+	DeleteRecordSet(zone, name, rrtype string) error
 	// List known authoritative zones
 	List() (models.Zones, error)
 	// ListByName return list with one authoritative zone by name argument

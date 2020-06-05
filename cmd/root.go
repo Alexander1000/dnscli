@@ -19,6 +19,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"regexp"
 
 	"github.com/spf13/cobra"
 
@@ -28,6 +29,10 @@ import (
 
 const (
 	domainPattern = `[[:alpha:]]+\.(.*)`
+)
+
+var (
+	domainRegexp = regexp.MustCompile(domainPattern)
 )
 
 var (

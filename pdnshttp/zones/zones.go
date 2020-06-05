@@ -73,3 +73,21 @@ func (c *client) AddRecordSet(zone string, set models.ResourceRecordSet) error {
 
 	return c.httpClient.Patch(path, nil, pdnshttp.WithJSONRequestBody(&patch))
 }
+
+// DeleteRecordSet removes a record set from a zone. The record set is matched
+// by name and type.
+func (c *client) DeleteRecordSet(zone, name, rrtype string) error {
+	path := fmt.Sprintf("/api/v1/servers/localhost/zones/%s", url.PathEscape(zone))
+
+	set := models.ResourceRecordSet{
+		Name:       name,
+		Type:       rrtype,
+		ChangeType: models.ChangeTypeDelete,
+	}
+
+	patch := models.Zone{
+		ResourceRecordSets: []models.ResourceRecordSet{set},
+	}
+
+	return c.httpClient.Patch(path, nil, pdnshttp.WithJSONRequestBody(&patch))
+}
