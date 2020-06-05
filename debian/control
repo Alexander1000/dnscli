@@ -1,0 +1,25 @@
+Source: dnscli
+Maintainer: Michael Bruskov <mixanemca@yandex.ru>
+Uploaders: Michael Bruskov <mixanemca@yandex.ru>
+Section: net
+Testsuite: autopkgtest-pkg-go
+Priority: optional
+Build-Depends: debhelper-compat (= 12),
+               dh-golang,
+               golang-any,
+               golang-github-mitchellh-go-homedir-dev,
+               golang-github-spf13-cobra-dev,
+               golang-github-spf13-viper-dev
+Standards-Version: 4.5.0
+Vcs-Browser: https://github.com/mixanemca/dnscli
+Vcs-Git: https://github.com/mixanemca/dnscli.git
+Homepage: https://github.com/mixanemca/dnscli
+Rules-Requires-Root: no
+XS-Go-Import-Path: github.com/mixanemca/dnscli
+
+Package: dnscli
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Built-Using: ${misc:Built-Using}
+Description: CLI utility for manage PowerDNS via API

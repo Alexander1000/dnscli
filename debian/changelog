@@ -1,0 +1,5 @@
+dnscli (0.0~git20200605.8340fe7-1) UNRELEASED; urgency=medium
+
+  * Initial release (Closes: TODO)
+
+ -- Mikhail Bruskov <mvbruskov@stretch-builder.msk.avito.ru>  Fri, 05 Jun 2020 18:20:19 +0300
