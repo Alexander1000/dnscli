@@ -2,12 +2,15 @@ package models
 
 import "fmt"
 
+// ZoneType zone type
 type ZoneType int
 
 const (
+	// ZoneTypeZone represents zone type `Zone`
 	ZoneTypeZone ZoneType = iota
 )
 
+// MarshalJSON implements the `json.Marshaler` interface
 func (k ZoneType) MarshalJSON() ([]byte, error) {
 	switch k {
 	case ZoneTypeZone:
@@ -17,6 +20,7 @@ func (k ZoneType) MarshalJSON() ([]byte, error) {
 	}
 }
 
+// UnmarshalJSON implements the `json.Unmarshaler` interface
 func (k *ZoneType) UnmarshalJSON(input []byte) error {
 	switch string(input) {
 	case `"Zone"`:

@@ -2,15 +2,20 @@ package models
 
 import "fmt"
 
+// ZoneKind DNS zone kind, one of `Native`, `Master`, `Slave`
 type ZoneKind int
 
 const (
-	_                       = iota
+	_ = iota
+	// ZoneKindNative represenrs `Native` zone kind
 	ZoneKindNative ZoneKind = iota
+	// ZoneKindMaster represenrs `Master` zone kind
 	ZoneKindMaster
+	// ZoneKindSlave represenrs `Slave` zone kind
 	ZoneKindSlave
 )
 
+// MarshalJSON implements the `json.Marshaler` interface
 func (k ZoneKind) MarshalJSON() ([]byte, error) {
 	switch k {
 	case ZoneKindNative:
@@ -24,6 +29,7 @@ func (k ZoneKind) MarshalJSON() ([]byte, error) {
 	}
 }
 
+// UnmarshalJSON implements the `json.Unmarshaler` interface
 func (k *ZoneKind) UnmarshalJSON(input []byte) error {
 	switch string(input) {
 	case `"Native"`:

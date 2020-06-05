@@ -48,6 +48,7 @@ type Zone struct {
 	TSIGSlaveKeyIDs    []string            `json:"tsig_slave_key_ids,omitempty"`
 }
 
+// JSON returns zone as a JSON string
 func (z Zone) JSON() string {
 	j, err := json.Marshal(z)
 	if err != nil {
@@ -56,6 +57,7 @@ func (z Zone) JSON() string {
 	return string(j)
 }
 
+// PrettyString returns zone as a pretty formatted string
 func (z Zone) PrettyString() string {
 	return fmt.Sprintf("%s: %s\n", z.Name, strings.Join(z.Nameservers, ", "))
 }
@@ -63,6 +65,7 @@ func (z Zone) PrettyString() string {
 // Zones represents the list of an authoritative DNS Zones
 type Zones []*Zone
 
+// JSON returs the list of zone as a JSON string
 func (zones Zones) JSON() string {
 	j, err := json.Marshal(zones)
 	if err != nil {
@@ -71,6 +74,7 @@ func (zones Zones) JSON() string {
 	return string(j)
 }
 
+// PrettyString returns the list of zones as a pretty formatted string
 func (zones Zones) PrettyString() string {
 	// Sorting Zones by Name
 	sort.Slice(zones, func(i, j int) bool {
