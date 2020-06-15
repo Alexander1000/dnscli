@@ -53,7 +53,7 @@ func zoneListRun(cmd *cobra.Command, args []string) {
 	}
 	var zones models.Zones
 	if name != "" {
-		zones, err = a.Zones().ListByName(name)
+		zones, err = a.Zones().ListByName(models.Canonicalize(name))
 	} else {
 		zones, err = a.Zones().List()
 	}
