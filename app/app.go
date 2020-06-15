@@ -33,7 +33,7 @@ type Option func(c *app) error
 
 // New creates a new PowerDNS client. Various client options can be used to configure
 // the PowerDNS client
-func New(opt ...Option) (App, error) {
+func New(opts ...Option) (App, error) {
 	a := &app{
 		baseURL: BaseURL,
 		httpClient: &http.Client{
@@ -42,8 +42,8 @@ func New(opt ...Option) (App, error) {
 		debugOutput: ioutil.Discard,
 	}
 
-	for i := range opt {
-		if err := opt[i](a); err != nil {
+	for _, opt := range opts {
+		if err := opt(a); err != nil {
 			return nil, err
 		}
 	}
