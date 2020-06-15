@@ -11,8 +11,8 @@ import (
 
 // ForwardZone represent forwarding zone for settings in PowerDNS Recursor
 type ForwardZone struct {
-	Name        string `json:"name"`
-	Nameservers ZoneNameservers
+	Name        string          `json:"name"`
+	Nameservers ZoneNameservers `json:"nameservers"`
 }
 
 // PrettyString creates a pretty string of the forwarding zone
