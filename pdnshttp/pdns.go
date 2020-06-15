@@ -65,8 +65,8 @@ func (pc *PDNSClient) doRequest(method string, path string, out interface{}, opt
 		return err
 	}
 
-	for i := range opts {
-		if err := opts[i](req); err != nil {
+	for _, opt := range opts {
+		if err := opt(req); err != nil {
 			return err
 		}
 	}

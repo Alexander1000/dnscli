@@ -34,7 +34,7 @@ type Option func(c *app) error
 // New creates a new PowerDNS client. Various client options can be used to configure
 // the PowerDNS client
 func New(opt ...Option) (App, error) {
-	a := app{
+	a := &app{
 		baseURL: BaseURL,
 		httpClient: &http.Client{
 			Timeout: DefaultClientTimeout,
@@ -43,7 +43,7 @@ func New(opt ...Option) (App, error) {
 	}
 
 	for i := range opt {
-		if err := opt[i](&a); err != nil {
+		if err := opt[i](a); err != nil {
 			return nil, err
 		}
 	}
@@ -52,7 +52,7 @@ func New(opt ...Option) (App, error) {
 	a.fz = fz.New(hc)
 	a.zones = zones.New(hc)
 
-	return &a, nil
+	return a, nil
 }
 
 // SetBaseURL overrides the default BaseURL
