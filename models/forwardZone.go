@@ -17,7 +17,15 @@ type ForwardZone struct {
 
 // PrettyString creates a pretty string of the forwarding zone
 func (fz ForwardZone) PrettyString() string {
-	return fmt.Sprintf("%s: %s", DeCanonicalize(fz.Name), strings.Join(fz.Nameservers, ", "))
+	buffer := new(bytes.Buffer)
+
+	w := tabwriter.NewWriter(buffer, minwidth, tabwidth, padding, padchar, tabwriter.TabIndent)
+	fmt.Fprintf(w, "zone\tnameservers\n")
+	fmt.Fprintf(w, "----\t-----------\n")
+	fmt.Fprintf(w, "%s\t%s\n", DeCanonicalize(fz.Name), strings.Join(fz.Nameservers, ", "))
+	w.Flush()
+
+	return buffer.String()
 }
 
 // JSON returns the JSON representation of the forwarding zone

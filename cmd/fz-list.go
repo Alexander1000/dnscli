@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/mixanemca/dnscli/app"
+	"github.com/mixanemca/dnscli/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,7 +38,7 @@ var fzListCmd = &cobra.Command{
 func init() {
 	fzCmd.AddCommand(fzListCmd)
 
-	fzListCmd.PersistentFlags().StringP("name", "n", "", "Name of forwarding zone")
+	fzListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Name of forwarding zone")
 }
 
 func fzListRun(cmd *cobra.Command, args []string) {
@@ -49,6 +50,19 @@ func fzListRun(cmd *cobra.Command, args []string) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+	if name != "" {
+		fz, err := a.ForwardZones().Get(models.Canonicalize(name))
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		if viper.GetString("output-type") == "json" {
+			fmt.Println(fz.JSON())
+			return
+		}
+		fmt.Print(fz.PrettyString())
+		return
 	}
 	fzs, err := a.ForwardZones().List()
 	if err != nil {
