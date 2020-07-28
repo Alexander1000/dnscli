@@ -44,9 +44,11 @@ var (
 	email         string
 	kind          string
 	masters       string
+	max           int
 	name          string
 	nameservers   string
 	outputType    string
+	query         string
 	rrtype        string
 	ttl           int
 	zone          string

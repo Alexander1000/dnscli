@@ -10,6 +10,7 @@ import (
 	"github.com/mixanemca/dnscli/pdnshttp"
 	"github.com/mixanemca/dnscli/pdnshttp/cache"
 	"github.com/mixanemca/dnscli/pdnshttp/fz"
+	"github.com/mixanemca/dnscli/pdnshttp/search"
 	"github.com/mixanemca/dnscli/pdnshttp/zones"
 )
 
@@ -25,9 +26,10 @@ type app struct {
 	httpClient  *http.Client
 	debugOutput io.Writer
 
-	cache cache.Client
-	fz    fz.Client
-	zones zones.Client
+	cache  cache.Client
+	fz     fz.Client
+	search search.Client
+	zones  zones.Client
 }
 
 // Option options for app
@@ -53,6 +55,7 @@ func New(opts ...Option) (App, error) {
 	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient.Timeout, a.debugOutput)
 	a.cache = cache.New(hc)
 	a.fz = fz.New(hc)
+	a.search = search.New(hc)
 	a.zones = zones.New(hc)
 
 	return a, nil
@@ -81,6 +84,10 @@ func (a *app) Cache() cache.Client {
 
 func (a *app) ForwardZones() fz.Client {
 	return a.fz
+}
+
+func (a *app) Search() search.Client {
+	return a.search
 }
 
 func (a *app) Zones() zones.Client {

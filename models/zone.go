@@ -87,7 +87,6 @@ func (zones Zones) PrettyString() string {
 	fmt.Fprintf(w, "zone\tserial\n")
 	fmt.Fprintf(w, "----\t------\n")
 	for _, z := range zones {
-		// fmt.Fprintf(w, "%s\t%s\n", z.Name, strings.Join(z.Nameservers, ", "))
 		fmt.Fprintf(w, "%s\t%d\n", DeCanonicalize(z.Name), z.Serial)
 	}
 	w.Flush()
