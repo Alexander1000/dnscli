@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// FlushResult
 type FlushResult struct {
 	Count  int    `json:"count"`
 	Result string `json:"result"`

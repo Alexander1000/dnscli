@@ -10,6 +10,8 @@ import (
 	"github.com/mixanemca/dnscli/pdnshttp"
 	"github.com/mixanemca/dnscli/pdnshttp/cache"
 	"github.com/mixanemca/dnscli/pdnshttp/fz"
+	"github.com/mixanemca/dnscli/pdnshttp/health"
+	"github.com/mixanemca/dnscli/pdnshttp/info"
 	"github.com/mixanemca/dnscli/pdnshttp/search"
 	"github.com/mixanemca/dnscli/pdnshttp/zones"
 )
@@ -28,6 +30,8 @@ type app struct {
 
 	cache  cache.Client
 	fz     fz.Client
+	health health.Client
+	info   info.Client
 	search search.Client
 	zones  zones.Client
 }
@@ -55,6 +59,8 @@ func New(opts ...Option) (App, error) {
 	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient.Timeout, a.debugOutput)
 	a.cache = cache.New(hc)
 	a.fz = fz.New(hc)
+	a.health = health.New(hc)
+	a.info = info.New(hc)
 	a.search = search.New(hc)
 	a.zones = zones.New(hc)
 
@@ -84,6 +90,14 @@ func (a *app) Cache() cache.Client {
 
 func (a *app) ForwardZones() fz.Client {
 	return a.fz
+}
+
+func (a *app) Health() health.Client {
+	return a.health
+}
+
+func (a *app) Info() info.Client {
+	return a.info
 }
 
 func (a *app) Search() search.Client {
