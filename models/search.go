@@ -98,8 +98,12 @@ func (searchReults SearchResults) PrettyString() string {
 	fmt.Fprintf(w, "content\tdisabled\tname\tobject_type\tzone_id\tzone\ttype\tttl\n")
 	fmt.Fprintf(w, "-------\t--------\t----\t-----------\t-------\t----\t----\t---\n")
 	for _, r := range searchReults {
+		content := DeCanonicalize(r.Content)
+		if content == "" {
+			content = " "
+		}
 		fmt.Fprintf(w, "%s\t%t\t%s\t%s\t%s\t%s\t%s\t%d\n",
-			DeCanonicalize(r.Content),
+			content,
 			r.Disabled,
 			DeCanonicalize(r.Name),
 			r.ObjectType.String(),
