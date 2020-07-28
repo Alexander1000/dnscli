@@ -38,9 +38,9 @@ var fzAddCmd = &cobra.Command{
 func init() {
 	fzCmd.AddCommand(fzAddCmd)
 
-	fzAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
+	fzAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "zone name")
 	fzAddCmd.MarkPersistentFlagRequired("name")
-	fzAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
+	fzAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "comma separated list of nameservers")
 	fzAddCmd.MarkPersistentFlagRequired("nameservers")
 }
 

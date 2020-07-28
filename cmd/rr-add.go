@@ -33,7 +33,7 @@ var rrAddCmd = &cobra.Command{
 	Use:     "add",
 	Short:   "Add (replace) resource recond to zone on an authoritative servers",
 	Example: `  dnscli rr new --name host.example.com --type A --ttl 400 --content 10.0.0.1
-  dnscli rr update --name cname.example.com --type CNAME --ttl 30 --content host.example.com
+  dnscli rr update --name cname.example.com --type CNAME --zone example.com --ttl 30 --content host.example.com
   dnscli rr change --name example.com --type SOA --zone example.com --content "ns1.example.com. admins.avito.ru. 2020060511 1800 900 604800 86400"`,
 	Run: rrAddCmdRun,
 }
@@ -52,8 +52,17 @@ func init() {
 }
 
 func rrAddCmdRun(cmd *cobra.Command, args []string) {
-	if zone == "" {
+	// name = hostname.example.com
+	if isValidDomain.MatchString(name) {
+		// zone = example.com
 		zone = domainRegexp.ReplaceAllString(name, "$1")
+	} else if zone == "" {
+		// Check --name is shortname and --zone key not defined
+		fmt.Printf("ERROR: You must set FQDN for '--name' key or use '--zone' key")
+		os.Exit(1)
+	} else {
+		// name = hostname + example.com
+		name = name + "." + zone
 	}
 
 	if !strings.Contains(name, zone) {

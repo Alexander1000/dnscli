@@ -22,8 +22,8 @@ import (
 )
 
 var (
-    version string = "unknown"
-    build   string = "unknown"
+	version string = "unknown"
+	build   string = "unknown"
 )
 
 // versionCmd represents the version command

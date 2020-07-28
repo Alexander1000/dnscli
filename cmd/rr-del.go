@@ -47,8 +47,17 @@ func init() {
 }
 
 func rrDelCmdRun(cmd *cobra.Command, args []string) {
-	if zone == "" {
+	// name = hostname.example.com
+	if isValidDomain.MatchString(name) {
+		// zone = example.com
 		zone = domainRegexp.ReplaceAllString(name, "$1")
+	} else if zone == "" {
+		// Check --name is shortname and --zone key not defined
+		fmt.Printf("ERROR: You must set FQDN for '--name' key or use '--zone' key")
+		os.Exit(1)
+	} else {
+		// name = hostname + example.com
+		name = name + "." + zone
 	}
 
 	if !strings.Contains(name, zone) {

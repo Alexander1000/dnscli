@@ -38,7 +38,7 @@ var fzListCmd = &cobra.Command{
 func init() {
 	fzCmd.AddCommand(fzListCmd)
 
-	fzListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Name of forwarding zone")
+	fzListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of forwarding zone")
 }
 
 func fzListRun(cmd *cobra.Command, args []string) {

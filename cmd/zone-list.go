@@ -38,7 +38,7 @@ var zoneListCmd = &cobra.Command{
 func init() {
 	zoneCmd.AddCommand(zoneListCmd)
 
-	zoneListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Name of authoritative zone")
+	zoneListCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of authoritative zone")
 }
 
 func zoneListRun(cmd *cobra.Command, args []string) {

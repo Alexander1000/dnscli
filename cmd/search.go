@@ -36,10 +36,10 @@ var searchCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(searchCmd)
 
-	searchCmd.PersistentFlags().StringVarP(&query, "query", "q", "", "The string to search for")
+	searchCmd.PersistentFlags().StringVarP(&query, "query", "q", "", "the string to search for")
 	searchCmd.MarkPersistentFlagRequired("query")
-	searchCmd.PersistentFlags().IntVarP(&max, "max", "m", 10, "Maximum number of entries to return")
-	searchCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "all", "Type of data to search for, one of 'all', 'zone', 'record', 'comment'")
+	searchCmd.PersistentFlags().IntVarP(&max, "max", "m", 10, "maximum number of entries to return")
+	searchCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "all", "type of data to search for, one of 'all', 'zone', 'record', 'comment'")
 }
 
 func searchCmdRun(cmd *cobra.Command, args []string) {

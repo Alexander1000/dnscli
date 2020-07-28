@@ -28,11 +28,13 @@ import (
 )
 
 const (
-	domainPattern = `[[:alpha:]]+\.(.*)`
+	domainPattern           = `[[:alpha:]]+\.(.*)`
+	domainValidationPattern = `(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]`
 )
 
 var (
-	domainRegexp = regexp.MustCompile(domainPattern)
+	domainRegexp  = regexp.MustCompile(domainPattern)
+	isValidDomain = regexp.MustCompile(domainValidationPattern)
 )
 
 var (
@@ -78,9 +80,9 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dnscli.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&baseURL, "baseURL", "b", "http://127.0.0.1:8081", "PowerDNS API base URL")
-	rootCmd.PersistentFlags().IntVarP(&clientTimeout, "timeout", "", 5, "Client timeout in seconds")
-	rootCmd.PersistentFlags().StringVarP(&outputType, "output-type", "o", "text", "Print output in format: text/json")
-	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Turn on debug output to STDERR")
+	rootCmd.PersistentFlags().IntVarP(&clientTimeout, "timeout", "", 5, "client timeout in seconds")
+	rootCmd.PersistentFlags().StringVarP(&outputType, "output-type", "o", "text", "print output in format: text/json")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "turn on debug output to STDERR")
 
 	viper.BindPFlag("baseURL", rootCmd.PersistentFlags().Lookup("baseURL"))
 	viper.BindPFlag("timeout", rootCmd.PersistentFlags().Lookup("timeout"))
@@ -110,7 +112,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("Config file %s not found", viper.ConfigFileUsed())
+		fmt.Printf("ERROR: Config file %s not found", viper.ConfigFileUsed())
 		os.Exit(1)
 	}
 }

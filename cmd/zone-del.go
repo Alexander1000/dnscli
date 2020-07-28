@@ -38,7 +38,7 @@ var zoneDelCmd = &cobra.Command{
 func init() {
 	zoneCmd.AddCommand(zoneDelCmd)
 
-	zoneDelCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Name of forwarding zone")
+	zoneDelCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "name of forwarding zone")
 	zoneDelCmd.MarkPersistentFlagRequired("name")
 }
 

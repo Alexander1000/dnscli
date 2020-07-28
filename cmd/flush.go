@@ -36,7 +36,7 @@ var flushCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(flushCmd)
 
-	flushCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Domain name")
+	flushCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "domain name")
 	flushCmd.MarkPersistentFlagRequired("name")
 }
 

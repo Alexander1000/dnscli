@@ -38,13 +38,13 @@ var zoneAddCmd = &cobra.Command{
 func init() {
 	zoneCmd.AddCommand(zoneAddCmd)
 
-	zoneAddCmd.PersistentFlags().StringVarP(&kind, "kind", "k", "native", "Zone kind (native, master, slave)")
-	zoneAddCmd.PersistentFlags().StringVarP(&masters, "masters", "m", "", "Comma separated list of IP addresses configured as a master for this zone (\"Slave\" type zones only)")
-	zoneAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
+	zoneAddCmd.PersistentFlags().StringVarP(&kind, "kind", "k", "native", "zone kind (native, master, slave)")
+	zoneAddCmd.PersistentFlags().StringVarP(&masters, "masters", "m", "", "comma separated list of IP addresses configured as a master for this zone (\"Slave\" type zones only)")
+	zoneAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "zone name")
 	zoneAddCmd.MarkPersistentFlagRequired("name")
-	zoneAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
+	zoneAddCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "comma separated list of nameservers")
 	// zoneAddCmd.MarkPersistentFlagRequired("nameservers")
-	zoneAddCmd.PersistentFlags().StringVarP(&email, "soa-email", "e", "admins.avito.ru", "Email for the domain")
+	zoneAddCmd.PersistentFlags().StringVarP(&email, "soa-email", "e", "admins.avito.ru", "email for the domain")
 }
 
 func zoneAddCmdRun(cmd *cobra.Command, args []string) {

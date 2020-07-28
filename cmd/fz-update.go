@@ -38,9 +38,9 @@ var fzUpdateCmd = &cobra.Command{
 func init() {
 	fzCmd.AddCommand(fzUpdateCmd)
 
-	fzUpdateCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Zone name")
+	fzUpdateCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "zone name")
 	fzUpdateCmd.MarkPersistentFlagRequired("name")
-	fzUpdateCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "Comma separated list of nameservers")
+	fzUpdateCmd.PersistentFlags().StringVarP(&nameservers, "nameservers", "s", "", "comma separated list of nameservers")
 	fzUpdateCmd.MarkPersistentFlagRequired("nameservers")
 }
 
