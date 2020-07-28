@@ -14,7 +14,7 @@ func (c *client) Search(query string, max int, objectType models.ObjectType) (mo
 	err := c.httpClient.Get(
 		path,
 		&results,
-		pdnshttp.WithQueryValue("q", query),
+		pdnshttp.WithQueryValue("q", models.DeCanonicalize(query)),
 		pdnshttp.WithQueryValue("max", fmt.Sprintf("%d", max)),
 		pdnshttp.WithQueryValue("object_type", objectType.String()),
 	)
