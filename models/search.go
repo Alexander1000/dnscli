@@ -99,12 +99,12 @@ func (searchReults SearchResults) PrettyString() string {
 	fmt.Fprintf(w, "-------\t--------\t----\t-----------\t-------\t----\t----\t---\n")
 	for _, r := range searchReults {
 		fmt.Fprintf(w, "%s\t%t\t%s\t%s\t%s\t%s\t%s\t%d\n",
-			r.Content,
+			DeCanonicalize(r.Content),
 			r.Disabled,
-			r.Name,
+			DeCanonicalize(r.Name),
 			r.ObjectType.String(),
-			r.ZoneID,
-			r.Zone,
+			DeCanonicalize(r.ZoneID),
+			DeCanonicalize(r.Zone),
 			r.Type,
 			r.TTL,
 		)
