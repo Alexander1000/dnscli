@@ -54,6 +54,11 @@ func (pc *PDNSClient) Patch(path string, out interface{}, opts ...RequestOption)
 	return pc.doRequest(http.MethodPatch, path, out, opts...)
 }
 
+// Put executes a PUT request
+func (pc *PDNSClient) Put(path string, out interface{}, opts ...RequestOption) error {
+	return pc.doRequest(http.MethodPut, path, out, opts...)
+}
+
 // Delete executes a DELETE request
 func (pc *PDNSClient) Delete(path string, out interface{}, opts ...RequestOption) error {
 	return pc.doRequest(http.MethodDelete, path, out, opts...)
