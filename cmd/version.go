@@ -18,7 +18,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/mixanemca/dnscli/models"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -28,13 +30,25 @@ var (
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Show version and build info",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("version: %s, build: %s\n", version, build)
-	},
+	Use:     "version",
+	Short:   "Show version and build info",
+	Example: "  dnscli version",
+	Run:     versionCmdRun,
 }
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
+}
+
+func versionCmdRun(cmd *cobra.Command, args []string) {
+	v := models.VersionInfo{
+		Version: version,
+		Build:   build,
+	}
+	if viper.GetString("output-type") == "json" {
+		fmt.Println(v.JSON())
+		return
+	}
+
+	fmt.Print(v.PrettyString())
 }
