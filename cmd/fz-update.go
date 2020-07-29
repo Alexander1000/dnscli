@@ -51,7 +51,7 @@ func fzUpdateCmdRun(cmd *cobra.Command, args []string) {
 		ns[i] = strings.TrimSpace(ns[i])
 	}
 	fz := models.ForwardZone{
-		Name:        name,
+		Name:        models.Canonicalize(name),
 		Nameservers: ns,
 	}
 
