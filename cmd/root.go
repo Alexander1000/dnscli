@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	domainPattern           = `[[:alpha:]]+\.(.*)`
+	domainPattern           = `[0-9a-zA-Z-]+\.(.*)`
 	domainValidationPattern = `(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]`
 )
 
