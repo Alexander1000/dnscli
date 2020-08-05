@@ -27,35 +27,38 @@ import (
 	"github.com/spf13/viper"
 )
 
-// AddCmd represents the add command
-var rrAddCmd = &cobra.Command{
-	Aliases: []string{"change", "mv", "new", "replace", "update"},
-	Use:     "add",
-	Short:   "Add (replace) resource recond to zone on an authoritative servers",
-	Example: `  dnscli rr new --name host.example.com --type A --ttl 400 --content 10.0.0.1
+// rrReplaceCmd represents the replace (add) command
+var rrReplaceCmd = &cobra.Command{
+	Aliases: []string{"add", "change", "mv", "new", "update"},
+	Use:     "replace",
+	Short:   "Replace (add) resource recond to zone on an authoritative servers",
+	Example: `  dnscli rr replace --name host.example.com --type A --ttl 400 --content 10.0.0.1
   dnscli rr update --name cname.example.com --type CNAME --zone example.com --ttl 30 --content host.example.com
   dnscli rr change --name example.com --type SOA --zone example.com --content "ns1.example.com. admins.avito.ru. 2020060511 1800 900 604800 86400"`,
-	Run: rrAddCmdRun,
+	Run: rrReplaceCmdRun,
 }
 
 func init() {
-	rrCmd.AddCommand(rrAddCmd)
+	rrCmd.AddCommand(rrReplaceCmd)
 
-	rrAddCmd.PersistentFlags().StringVarP(&content, "content", "c", "", "IP address or domain name")
-	rrAddCmd.MarkPersistentFlagRequired("content")
-	rrAddCmd.PersistentFlags().StringVarP(&zone, "zone", "z", "", "Zone name")
-	rrAddCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Resource record name")
-	rrAddCmd.MarkPersistentFlagRequired("name")
-	rrAddCmd.PersistentFlags().IntVarP(&ttl, "ttl", "l", 1800, "The time to live of the resource record in seconds")
-	rrAddCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "", "Type of the resource record (A, CNAME)")
-	rrAddCmd.MarkPersistentFlagRequired("type")
+	rrReplaceCmd.PersistentFlags().StringVarP(&content, "content", "c", "", "Comma separated IP address or domain name")
+	rrReplaceCmd.MarkPersistentFlagRequired("content")
+	rrReplaceCmd.PersistentFlags().StringVarP(&zone, "zone", "z", "", "Zone name")
+	rrReplaceCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Resource record name")
+	rrReplaceCmd.MarkPersistentFlagRequired("name")
+	rrReplaceCmd.PersistentFlags().IntVarP(&ttl, "ttl", "l", 1800, "The time to live of the resource record in seconds")
+	rrReplaceCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "", "Type of the resource record (A, CNAME)")
+	rrReplaceCmd.MarkPersistentFlagRequired("type")
 }
 
-func rrAddCmdRun(cmd *cobra.Command, args []string) {
+func rrReplaceCmdRun(cmd *cobra.Command, args []string) {
+	rrtype = strings.ToUpper(rrtype)
 	// name = hostname.example.com
 	if isValidDomain.MatchString(name) {
-		// zone = example.com
-		zone = domainRegexp.ReplaceAllString(name, "$1")
+		if rrtype == "A" || rrtype == "AAAA" || rrtype == "CNAME" {
+			// zone = example.com
+			zone = domainRegexp.ReplaceAllString(name, "$1")
+		}
 	} else if zone == "" {
 		// Check --name is shortname and --zone key not defined
 		fmt.Printf("ERROR: You must set FQDN for '--name' key or use '--zone' key")
@@ -70,21 +73,27 @@ func rrAddCmdRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	rrtype = strings.ToUpper(rrtype)
 	if rrtype == "A" || rrtype == "AAAA" || rrtype == "NS" ||
 		rrtype == "CNAME" || rrtype == "DNAME" {
 		name = models.Canonicalize(name)
 		zone = models.Canonicalize(zone)
 	}
-	if rrtype == "CNAME" {
-		content = models.Canonicalize(content)
-	}
 
 	var records []models.Record
-	record := models.Record{
-		Content: content,
+
+	// make slice of strings and trim spaces
+	contents := strings.Split(content, ",")
+	for i := range contents {
+		contents[i] = strings.TrimSpace(contents[i])
+		if rrtype == "CNAME" || rrtype == "NS" {
+			contents[i] = models.Canonicalize(contents[i])
+		}
+		record := models.Record{
+			Content: contents[i],
+		}
+		records = append(records, record)
 	}
-	records = append(records, record)
+
 	rrset := models.ResourceRecordSet{
 		Name:    models.Canonicalize(name),
 		Type:    rrtype,
