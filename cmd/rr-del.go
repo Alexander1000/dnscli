@@ -29,10 +29,10 @@ import (
 
 // AddCmd represents the add command
 var rrDelCmd = &cobra.Command{
-	Aliases: []string{"rm"},
-	Use:     "del",
-	Short:   "Delete resource recond from zone on an authoritative servers",
-	Example: "  dnscli rr del --name host.example.com --type A",
+	Aliases: []string{"del", "rm"},
+	Use:     "delete",
+	Short:   "Delete resource record from zone on an authoritative servers",
+	Example: "  dnscli rr delete --name host.example.com --type A",
 	Run:     rrDelCmdRun,
 }
 
