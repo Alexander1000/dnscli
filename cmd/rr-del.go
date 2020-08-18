@@ -32,7 +32,7 @@ var rrDelCmd = &cobra.Command{
 	Aliases: []string{"del", "rm"},
 	Use:     "delete",
 	Short:   "Delete resource record from zone on an authoritative servers",
-	Example: "  dnscli rr delete --name host.example.com --type A",
+	Example: "  dnscli rr delete --name host --zone example.com --type A",
 	Run:     rrDelCmdRun,
 }
 
@@ -44,22 +44,19 @@ func init() {
 	rrDelCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "", "Type of the resource record (A, CNAME)")
 	rrDelCmd.MarkPersistentFlagRequired("type")
 	rrDelCmd.PersistentFlags().StringVarP(&zone, "zone", "z", "", "Zone name")
+	rrDelCmd.MarkPersistentFlagRequired("zone")
 }
 
 func rrDelCmdRun(cmd *cobra.Command, args []string) {
-	// name = hostname.example.com
-	if isValidDomain.MatchString(name) {
-		// zone = example.com
-		zone = domainRegexp.ReplaceAllString(name, "$1")
-	} else if zone == "" {
-		// Check --name is shortname and --zone key not defined
-		fmt.Printf("ERROR: You must set FQDN for '--name' key or use '--zone' key")
+	// check that name not FQDN
+	if strings.Contains(name, zone) {
+		fmt.Printf("ERROR: Name (%s) must not be a FQDN. Without domain %s\n", name, zone)
 		os.Exit(1)
-	} else {
-		// name = hostname + example.com
-		name = name + "." + zone
 	}
+	// name = hostname + example.com
+	name = name + "." + zone
 
+	// Maybe it's not needed now
 	if !strings.Contains(name, zone) {
 		fmt.Printf("ERROR: Domain name %s not match with zone %s\n", name, zone)
 		os.Exit(1)

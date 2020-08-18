@@ -32,8 +32,8 @@ var rrReplaceCmd = &cobra.Command{
 	Aliases: []string{"add", "change", "mv", "new", "update"},
 	Use:     "replace",
 	Short:   "Replace (add) resource recond to zone on an authoritative servers",
-	Example: `  dnscli rr replace --name host.example.com --type A --ttl 400 --content 10.0.0.1
-  dnscli rr update --name cname.example.com --type CNAME --zone example.com --ttl 30 --content host.example.com
+	Example: `  dnscli rr replace --name host --type A --ttl 400 --content 10.0.0.1
+  dnscli rr update --name cname --type CNAME --zone example.com --ttl 30 --content host.example.com
   dnscli rr change --name example.com --type SOA --zone example.com --content "ns1.example.com. admins.avito.ru. 2020060511 1800 900 604800 86400"`,
 	Run: rrReplaceCmdRun,
 }
@@ -44,6 +44,7 @@ func init() {
 	rrReplaceCmd.PersistentFlags().StringVarP(&content, "content", "c", "", "Comma separated IP address or domain name")
 	rrReplaceCmd.MarkPersistentFlagRequired("content")
 	rrReplaceCmd.PersistentFlags().StringVarP(&zone, "zone", "z", "", "Zone name")
+	rrReplaceCmd.MarkPersistentFlagRequired("zone")
 	rrReplaceCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "Resource record name")
 	rrReplaceCmd.MarkPersistentFlagRequired("name")
 	rrReplaceCmd.PersistentFlags().IntVarP(&ttl, "ttl", "l", 1800, "The time to live of the resource record in seconds")
@@ -52,26 +53,21 @@ func init() {
 }
 
 func rrReplaceCmdRun(cmd *cobra.Command, args []string) {
-	rrtype = strings.ToUpper(rrtype)
-	// name = hostname.example.com
-	if isValidDomain.MatchString(name) {
-		if rrtype == "A" || rrtype == "AAAA" || rrtype == "CNAME" {
-			// zone = example.com
-			zone = domainRegexp.ReplaceAllString(name, "$1")
-		}
-	} else if zone == "" {
-		// Check --name is shortname and --zone key not defined
-		fmt.Printf("ERROR: You must set FQDN for '--name' key or use '--zone' key")
+	// check that name not FQDN
+	if strings.Contains(name, zone) {
+		fmt.Printf("ERROR: Name (%s) must not be a FQDN. Without domain %s\n", name, zone)
 		os.Exit(1)
-	} else {
-		// name = hostname + example.com
-		name = name + "." + zone
 	}
+	// name = hostname + example.com
+	name = name + "." + zone
 
+	// Maybe it's not needed now
 	if !strings.Contains(name, zone) {
 		fmt.Printf("ERROR: Domain name %s not match with zone %s\n", name, zone)
 		os.Exit(1)
 	}
+
+	rrtype = strings.ToUpper(rrtype)
 
 	if rrtype == "A" || rrtype == "AAAA" || rrtype == "NS" ||
 		rrtype == "CNAME" || rrtype == "DNAME" {
