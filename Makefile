@@ -56,8 +56,8 @@ test:
 	@echo "runs the go test command"
 	@go test -v $(GOFILES)
 
-## fpm-deb: Build Debian package.
-fpm-deb:
+## deb: Build Debian package.
+deb:
 	fpm -s dir -t deb -n $(PROJECTNAME) -v $(VERSION) \
 		--deb-priority optional --category admin \
 		--force \
