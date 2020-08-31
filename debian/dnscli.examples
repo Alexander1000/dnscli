@@ -1,7 +1,7 @@
 ---
 # Anycast address for DNSaaS
 # pdns.msk.avito.ru or 10.0.0.1 for production
-baseURL: http://pdns-dev.msk.avito.ru
+baseURL: https://pdns-dev.msk.avito.ru
 
 # Timeout in seconds
 timeout: 5
