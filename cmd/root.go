@@ -52,6 +52,7 @@ var (
 	outputType    string
 	query         string
 	rrtype        string
+	setPTR        bool
 	ttl           int
 	zone          string
 )
