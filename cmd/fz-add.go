@@ -60,9 +60,11 @@ func fzAddCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fz := models.ForwardZone{
-		Name:        models.Canonicalize(name),
-		Nameservers: ns,
+	fz := models.ForwardZones{
+		&models.ForwardZone{
+			Name:        models.Canonicalize(name),
+			Nameservers: ns,
+		},
 	}
 	err = a.ForwardZones().Add(fz)
 	if err != nil {

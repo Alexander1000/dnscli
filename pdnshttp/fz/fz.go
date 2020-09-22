@@ -31,7 +31,7 @@ func (c *client) Get(name string) (models.ForwardZone, error) {
 }
 
 // Add creates new forward zone
-func (c *client) Add(fz models.ForwardZone) error {
+func (c *client) Add(fz models.ForwardZones) error {
 	path := "/api/v1/servers/localhost/forward-zones"
 	err := c.httpClient.Post(path, nil, pdnshttp.WithJSONRequestBody(&fz))
 	if err != nil {

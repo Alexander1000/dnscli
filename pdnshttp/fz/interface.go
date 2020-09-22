@@ -5,7 +5,7 @@ import "github.com/mixanemca/dnscli/models"
 // Client defines the interface for forwarding zone operations.
 type Client interface {
 	// Add creates new forwarding zone
-	Add(models.ForwardZone) error
+	Add(models.ForwardZones) error
 	// Delete deletes forwarding zones
 	Delete(models.ForwardZones) error
 	// DeleteByName delete forwarding zone
