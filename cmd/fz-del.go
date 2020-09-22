@@ -52,7 +52,7 @@ func fzDelCmdRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	err = a.ForwardZones().Delete(models.Canonicalize(name))
+	err = a.ForwardZones().DeleteByName(models.Canonicalize(name))
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

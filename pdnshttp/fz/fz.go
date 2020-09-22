@@ -50,10 +50,20 @@ func (c *client) Update(fz models.ForwardZone) error {
 	return nil
 }
 
-// Delete delete forwarding zone
-func (c *client) Delete(name string) error {
+// DeleteByName deletes forwarding zone by name
+func (c *client) DeleteByName(name string) error {
 	path := fmt.Sprintf("/api/v1/servers/localhost/forward-zones/%s", url.PathEscape(name))
 	err := c.httpClient.Delete(path, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete deletes forwarding zones
+func (c *client) Delete(fz models.ForwardZones) error {
+	path := "/api/v1/servers/localhost/forward-zones"
+	err := c.httpClient.Delete(path, nil, pdnshttp.WithJSONRequestBody(&fz))
 	if err != nil {
 		return err
 	}
