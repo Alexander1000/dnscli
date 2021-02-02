@@ -30,6 +30,7 @@ import (
 // rrReplaceCmd represents the replace (add) command
 var rrReplaceCmd = &cobra.Command{
 	Aliases: []string{"add", "change", "mv", "new", "update"},
+	Args:    cobra.NoArgs,
 	Use:     "replace",
 	Short:   "Replace (add) resource recond to zone on an authoritative servers",
 	Example: `  dnscli rr replace --name host --zone example.com --type A --ttl 400 --content 10.0.0.1 --set-ptr
