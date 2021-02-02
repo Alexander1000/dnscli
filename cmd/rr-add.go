@@ -33,7 +33,7 @@ var rrReplaceCmd = &cobra.Command{
 	Use:     "replace",
 	Short:   "Replace (add) resource recond to zone on an authoritative servers",
 	Example: `  dnscli rr replace --name host --zone example.com --type A --ttl 400 --content 10.0.0.1 --set-ptr
-  dnscli rr add --name host --zone example.com --type A --ttl 30 --content 127.0.0.1 --set-ptr false
+  dnscli rr add --name host --zone example.com --type A --ttl 30 --content 127.0.0.1 --set-ptr=false
   dnscli rr update --name cname --zone example.com --type CNAME --ttl 30 --content host.example.com
   dnscli rr change --name example.com --zone example.com --type SOA --content "ns1.example.com. admins.example.com. 2020060511 1800 900 604800 86400"`,
 	Run: rrReplaceCmdRun,
@@ -52,7 +52,7 @@ func init() {
 	rrReplaceCmd.PersistentFlags().StringVarP(&rrtype, "type", "t", "", "Type of the resource record (A, CNAME)")
 	rrReplaceCmd.MarkPersistentFlagRequired("type")
 	rrReplaceCmd.PersistentFlags().BoolVarP(&setPTR, "set-ptr", "p", true, "Create a PTR record with A or AAAA")
-	rrReplaceCmd.PersistentFlags().Lookup("set-ptr").NoOptDefVal = "false"
+	//rrReplaceCmd.PersistentFlags().Lookup("set-ptr").NoOptDefVal = "true"
 }
 
 func rrReplaceCmdRun(cmd *cobra.Command, args []string) {
