@@ -57,7 +57,7 @@ test:
 	@go test -v $(GOFILES)
 
 ## deb: Build Debian package.
-deb:
+deb: linux
 	fpm -s dir -t deb -n $(PROJECTNAME) -v $(VERSION) \
 		--deb-priority optional --category admin \
 		--force \
