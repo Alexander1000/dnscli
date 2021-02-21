@@ -16,8 +16,18 @@ sudo make install
 #### Config example
 ```yaml
 ---
-# Anycast address for DNSaaS
-baseURL: http://10.0.0.1
+# Address or IP for API server
+baseURL: https://example.com
+
+# TLS
+# controls whether a client uses TLS transport
+tls: false
+# path to Certificate Authority certificate chain
+cacert: /Users/john/certs/personal-certificate-chained.pem
+# path to personal TLS key
+key: /Users/john/private/johndoe.key
+# path to personal TLS certificate
+cert: /Users/john/private/johndoe.crt
 
 # Timeout in seconds
 timeout: 5
