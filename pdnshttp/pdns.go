@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"strings"
-	"time"
 )
 
 // PDNSClient is the client for PowerDNS API
@@ -17,12 +16,10 @@ type PDNSClient struct {
 }
 
 // NewPDNSClient creates a new PDNSClient
-func NewPDNSClient(baseURL string, t time.Duration, debugOutput io.Writer) *PDNSClient {
+func NewPDNSClient(baseURL string, hc *http.Client, debugOutput io.Writer) *PDNSClient {
 	return &PDNSClient{
-		baseURL: baseURL,
-		httpClient: &http.Client{
-			Timeout: t,
-		},
+		baseURL:     baseURL,
+		httpClient:  hc,
 		debugOutput: debugOutput,
 	}
 }

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,6 +27,10 @@ const (
 
 type app struct {
 	baseURL     string
+	tlsEnable   bool
+	tlsCAPath   string
+	tlsCertPath string
+	tlsKeyPath  string
 	httpClient  *http.Client
 	debugOutput io.Writer
 
@@ -42,6 +48,7 @@ type Option func(c *app) error
 // New creates a new PowerDNS client. Various client options can be used to configure
 // the PowerDNS client
 func New(opts ...Option) (App, error) {
+	// App with default values
 	a := &app{
 		baseURL: BaseURL,
 		httpClient: &http.Client{
@@ -56,7 +63,18 @@ func New(opts ...Option) (App, error) {
 		}
 	}
 
-	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient.Timeout, a.debugOutput)
+	// Use TLS transport
+	if a.tlsEnable {
+		tlsConfig, err := newTLSConfig(a.tlsCAPath, a.tlsCertPath, a.tlsKeyPath)
+		if err != nil {
+			return nil, err
+		}
+		a.httpClient.Transport = &http.Transport{
+			TLSClientConfig: tlsConfig,
+		}
+	}
+
+	hc := pdnshttp.NewPDNSClient(a.baseURL, a.httpClient, a.debugOutput)
 	a.cache = cache.New(hc)
 	a.fz = fz.New(hc)
 	a.health = health.New(hc)
@@ -65,6 +83,44 @@ func New(opts ...Option) (App, error) {
 	a.zones = zones.New(hc)
 
 	return a, nil
+}
+
+// newTLSConfig creates new tls.Config with certificates and key
+func newTLSConfig(tlsCAPath, tlsCertPath, tlsKeyPath string) (*tls.Config, error) {
+	// create a Certificate pool to hold one or more CA certificates
+	caCertPool := x509.NewCertPool()
+
+	// read CA certificate(s) and add to the Certificate Pool
+	if tlsCAPath != "" {
+		caCert, err := ioutil.ReadFile(tlsCAPath)
+		if err != nil {
+			return nil, err
+		}
+		if ok := caCertPool.AppendCertsFromPEM(caCert); !ok {
+			return nil, err
+		}
+	}
+
+	// Make a tls.Config with CA certificates and client TLS key and certificate
+	cfg := &tls.Config{
+		// controls whether a client verifies the server's certificate chain and host name
+		// If InsecureSkipVerify is true, crypto/tls accepts any certificate presented by the server
+		// and any host name in that certificate
+		InsecureSkipVerify: false,
+		RootCAs:            caCertPool,
+		GetClientCertificate: func(*tls.CertificateRequestInfo) (*tls.Certificate, error) {
+			c, err := tls.LoadX509KeyPair(tlsCertPath, tlsKeyPath)
+			if err != nil {
+				return nil, err
+			}
+			return &c, nil
+		},
+	}
+	// parse cfg.Certificates and builds cfg.NameToCertificate from the CommonName and SubjectAlternateName
+	// fields of each of the leaf certificates
+	cfg.BuildNameToCertificate()
+
+	return cfg, nil
 }
 
 // SetBaseURL overrides the default BaseURL

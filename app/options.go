@@ -13,6 +13,17 @@ func WithBaseURL(baseURL string) Option {
 	}
 }
 
+// WithTLS sets an app's TLS settings
+func WithTLS(tlsEnable bool, tlsCAPath, tlsCertPath, tlsKeyPath string) Option {
+	return func(a *app) error {
+		a.tlsEnable = tlsEnable
+		a.tlsCAPath = tlsCAPath
+		a.tlsCertPath = tlsCertPath
+		a.tlsKeyPath = tlsKeyPath
+		return nil
+	}
+}
+
 // WithTimeout sets an app's timeout
 func WithTimeout(t int64) Option {
 	return func(a *app) error {

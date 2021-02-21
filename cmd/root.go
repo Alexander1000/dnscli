@@ -40,6 +40,10 @@ var (
 var (
 	baseURL       string
 	cfgFile       string
+	tlsEnable     bool
+	tlsCAPath     string
+	tlsCertPath   string
+	tlsKeyPath    string
 	clientTimeout int
 	content       string
 	debug         bool
@@ -81,11 +85,19 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dnscli.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&baseURL, "baseURL", "b", "http://127.0.0.1:8081", "PowerDNS API base URL")
+	rootCmd.PersistentFlags().BoolVarP(&tlsEnable, "tls", "t", true, "Use TLS to connect to PowerDNS API")
+	rootCmd.PersistentFlags().StringVarP(&tlsCAPath, "cacert", "a", "", "Path to TLS Certificate Authority certificate")
+	rootCmd.PersistentFlags().StringVarP(&tlsKeyPath, "key", "k", "", "Path to TLS key")
+	rootCmd.PersistentFlags().StringVarP(&tlsCertPath, "cert", "c", "", "Path to TLS certificate")
 	rootCmd.PersistentFlags().IntVarP(&clientTimeout, "timeout", "", 5, "client timeout in seconds")
 	rootCmd.PersistentFlags().StringVarP(&outputType, "output-type", "o", "text", "print output in format: text/json")
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "turn on debug output to STDERR")
 
 	viper.BindPFlag("baseURL", rootCmd.PersistentFlags().Lookup("baseURL"))
+	viper.BindPFlag("tls", rootCmd.PersistentFlags().Lookup("tls"))
+	viper.BindPFlag("cacert", rootCmd.PersistentFlags().Lookup("cacert"))
+	viper.BindPFlag("key", rootCmd.PersistentFlags().Lookup("key"))
+	viper.BindPFlag("cert", rootCmd.PersistentFlags().Lookup("cert"))
 	viper.BindPFlag("timeout", rootCmd.PersistentFlags().Lookup("timeout"))
 	viper.BindPFlag("output-type", rootCmd.PersistentFlags().Lookup("output-type"))
 	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
@@ -115,5 +127,17 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("ERROR: Config file %s not found", viper.ConfigFileUsed())
 		os.Exit(1)
+	}
+
+	// Check TLS fields
+	if viper.GetBool("tls") {
+		if viper.GetString("cert") == "" {
+			fmt.Println("ERROR: You must set --cert or 'cert' config variable")
+			os.Exit(1)
+		}
+		if viper.GetString("key") == "" {
+			fmt.Println("ERROR: You must set --key or 'key' config variable")
+			os.Exit(1)
+		}
 	}
 }
