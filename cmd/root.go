@@ -85,7 +85,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.dnscli.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&baseURL, "baseURL", "b", "http://127.0.0.1:8081", "PowerDNS API base URL")
-	rootCmd.PersistentFlags().BoolVarP(&tlsEnable, "tls", "t", true, "Use TLS to connect to PowerDNS API")
+	rootCmd.PersistentFlags().BoolVarP(&tlsEnable, "tls", "t", false, "Use TLS to connect to PowerDNS API")
 	rootCmd.PersistentFlags().StringVarP(&tlsCAPath, "cacert", "A", "", "Path to TLS Certificate Authority certificate")
 	rootCmd.PersistentFlags().StringVarP(&tlsKeyPath, "key", "K", "", "Path to TLS key")
 	rootCmd.PersistentFlags().StringVarP(&tlsCertPath, "cert", "C", "", "Path to TLS certificate")
