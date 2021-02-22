@@ -8,7 +8,7 @@ Copyright: 2020
 License: Apache-2.0
 
 Files: debian/*
-Copyright: 2020 Mikhail Bruskov <mvbruskov@stretch-builder.msk.avito.ru>
+Copyright: 2021 Michael Bruskov <mixanemca@yandex.ru>
 License: Apache-2.0
 Comment: Debian packaging is licensed under the same terms as upstream
 
