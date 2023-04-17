@@ -34,4 +34,6 @@ type Client interface {
 	List() (models.Zones, error)
 	// ListByName return list with one authoritative zone by name argument
 	ListByName(name string) (models.Zones, error)
+	// GetByName return zone with one authoritative zone by name argument and include the “rrsets” in the response
+	GetByName(name string) (*models.Zone, error)
 }
