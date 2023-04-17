@@ -46,6 +46,17 @@ func (c *client) ListByName(name string) (models.Zones, error) {
 	return zones, nil
 }
 
+// GetByName return zone with one authoritative zone by name argument and include the “rrsets” in the response
+func (c *client) GetByName(name string) (*models.Zone, error) {
+	zone := models.Zone{}
+	path := fmt.Sprintf("/api/v1/servers/localhost/zones/%s", url.PathEscape(name))
+	err := c.httpClient.Get(path, &zone)
+	if err != nil {
+		return nil, err
+	}
+	return &zone, nil
+}
+
 // Add creates new authoritative zone
 func (c *client) Add(z models.Zone) (*models.Zone, error) {
 	created := models.Zone{}
